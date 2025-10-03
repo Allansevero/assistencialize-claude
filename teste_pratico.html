@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste das Funcionalidades - Assistencialize</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #0b141a;
+            color: #e9edef;
+        }
+        .container {
+            background-color: #111b21;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            border: 1px solid #374045;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #00a884;
+            margin-bottom: 10px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+        }
+        .test-section h2 {
+            color: #e9edef;
+            border-bottom: 2px solid #00a884;
+            padding-bottom: 8px;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #8696a0;
+            font-weight: 500;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #374045;
+            border-radius: 8px;
+            background-color: #202c33;
+            color: #e9edef;
+            font-size: 14px;
+        }
+        .input-group input:focus {
+            outline: none;
+            border-color: #00a884;
+        }
+        .btn {
+            background-color: #00a884;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            transition: all 0.2s ease;
+        }
+        .btn:hover {
+            background-color: #00a884;
+            filter: brightness(1.1);
+        }
+        .btn:disabled {
+            background-color: #374045;
+            cursor: not-allowed;
+        }
+        .result {
+            background-color: #202c33;
+            border: 1px solid #374045;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+        .success { border-left: 4px solid #00a884; }
+        .error { border-left: 4px solid #ea4335; }
+        .warning { border-left: 4px solid #f57c00; }
+        .avatar-preview {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #374045;
+            margin: 10px 0;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-connected { background-color: #00a884; }
+        .status-disconnected { background-color: #ea4335; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧪 Teste das Funcionalidades</h1>
+            <p>Assistencialize - Avatares, Contatos e Grupos</p>
+        </div>
+
+        <!-- Configuração -->
+        <div class="test-section">
+            <h2>⚙️ Configuração</h2>
+            <div class="input-group">
+                <label for="baseUrl">URL Base da API:</label>
+                <input type="text" id="baseUrl" value="http://localhost:8080" placeholder="http://localhost:8080">
+            </div>
+            <div class="input-group">
+                <label for="jwtToken">JWT Token (do localStorage):</label>
+                <input type="text" id="jwtToken" placeholder="Cole aqui o token JWT">
+            </div>
+            <div class="input-group">
+                <label for="instanceToken">Token da Instância:</label>
+                <input type="text" id="instanceToken" placeholder="Token da instância conectada">
+            </div>
+            <div class="input-group">
+                <label for="instanceId">ID da Instância:</label>
+                <input type="text" id="instanceId" placeholder="ID da instância">
+            </div>
+        </div>
+
+        <!-- Teste 1: Listar Instâncias -->
+        <div class="test-section">
+            <h2>📋 1. Listar Instâncias</h2>
+            <button class="btn" onclick="testListInstances()">Listar Instâncias</button>
+            <div id="instancesResult" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- Teste 2: Status da Instância -->
+        <div class="test-section">
+            <h2>📊 2. Status da Instância</h2>
+            <button class="btn" onclick="testInstanceStatus()">Verificar Status</button>
+            <div id="statusResult" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- Teste 3: Avatar -->
+        <div class="test-section">
+            <h2>🖼️ 3. Buscar Avatar</h2>
+            <button class="btn" onclick="testAvatar()">Buscar Avatar</button>
+            <div id="avatarResult" class="result" style="display: none;"></div>
+            <div id="avatarPreview" style="display: none;"></div>
+        </div>
+
+        <!-- Teste 4: Contatos -->
+        <div class="test-section">
+            <h2>📞 4. Listar Contatos</h2>
+            <button class="btn" onclick="testContacts()">Listar Contatos</button>
+            <div id="contactsResult" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- Teste 5: Grupos -->
+        <div class="test-section">
+            <h2>👥 5. Listar Grupos</h2>
+            <button class="btn" onclick="testGroups()">Listar Grupos</button>
+            <div id="groupsResult" class="result" style="display: none;"></div>
+        </div>
+
+        <!-- Teste Completo -->
+        <div class="test-section">
+            <h2>🚀 Teste Completo</h2>
+            <button class="btn" onclick="runAllTests()" style="background-color: #00a884; font-size: 16px; padding: 15px 30px;">
+                Executar Todos os Testes
+            </button>
+            <div id="fullTestResult" class="result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        // Funções auxiliares
+        function getBaseUrl() {
+            return document.getElementById('baseUrl').value;
+        }
+
+        function getJwtToken() {
+            return document.getElementById('jwtToken').value;
+        }
+
+        function getInstanceToken() {
+            return document.getElementById('instanceToken').value;
+        }
+
+        function getInstanceId() {
+            return document.getElementById('instanceId').value;
+        }
+
+        function showResult(elementId, content, type = 'success') {
+            const element = document.getElementById(elementId);
+            element.textContent = content;
+            element.className = `result ${type}`;
+            element.style.display = 'block';
+        }
+
+        function showAvatarPreview(blob) {
+            const url = URL.createObjectURL(blob);
+            const preview = document.getElementById('avatarPreview');
+            preview.innerHTML = `<img src="${url}" class="avatar-preview" alt="Avatar Preview">`;
+            preview.style.display = 'block';
+        }
+
+        // Teste 1: Listar Instâncias
+        async function testListInstances() {
+            const baseUrl = getBaseUrl();
+            const jwtToken = getJwtToken();
+            
+            if (!jwtToken) {
+                showResult('instancesResult', '❌ JWT Token é obrigatório', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${baseUrl}/api/v1/instances`, {
+                    headers: {
+                        'Authorization': `Bearer ${jwtToken}`
+                    }
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    const instances = data.instances || data;
+                    let result = `✅ ${instances.length} instância(s) encontrada(s):\n\n`;
+                    
+                    instances.forEach(instance => {
+                        result += `ID: ${instance.id}\n`;
+                        result += `Nome: ${instance.name}\n`;
+                        result += `Token: ${instance.token}\n`;
+                        result += `Status: ${instance.connected ? '🟢 Conectado' : '🔴 Desconectado'}\n`;
+                        result += `JID: ${instance.jid || 'N/A'}\n`;
+                        result += `---\n`;
+                    });
+                    
+                    showResult('instancesResult', result, 'success');
+                } else {
+                    showResult('instancesResult', `❌ Erro: ${data.error || 'Erro desconhecido'}`, 'error');
+                }
+            } catch (error) {
+                showResult('instancesResult', `❌ Erro de conexão: ${error.message}`, 'error');
+            }
+        }
+
+        // Teste 2: Status da Instância
+        async function testInstanceStatus() {
+            const baseUrl = getBaseUrl();
+            const jwtToken = getJwtToken();
+            const instanceToken = getInstanceToken();
+            
+            if (!jwtToken || !instanceToken) {
+                showResult('statusResult', '❌ JWT Token e Instance Token são obrigatórios', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${baseUrl}/api/v1/session/status`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${jwtToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ token: instanceToken })
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    const status = data.data;
+                    let result = `✅ Status da Instância:\n\n`;
+                    result += `Conectado: ${status.Connected ? '🟢 Sim' : '🔴 Não'}\n`;
+                    result += `Autenticado: ${status.LoggedIn ? '🟢 Sim' : '🔴 Não'}\n`;
+                    result += `JID: ${status.JID || 'N/A'}\n`;
+                    
+                    showResult('statusResult', result, status.Connected ? 'success' : 'warning');
+                } else {
+                    showResult('statusResult', `❌ Erro: ${data.error || 'Erro desconhecido'}`, 'error');
+                }
+            } catch (error) {
+                showResult('statusResult', `❌ Erro de conexão: ${error.message}`, 'error');
+            }
+        }
+
+        // Teste 3: Avatar
+        async function testAvatar() {
+            const baseUrl = getBaseUrl();
+            const jwtToken = getJwtToken();
+            const instanceToken = getInstanceToken();
+            const instanceId = getInstanceId();
+            
+            if (!jwtToken || !instanceToken || !instanceId) {
+                showResult('avatarResult', '❌ JWT Token, Instance Token e Instance ID são obrigatórios', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${baseUrl}/api/v1/instances/${instanceId}/avatar`, {
+                    headers: {
+                        'Authorization': `Bearer ${jwtToken}`,
+                        'token': instanceToken
+                    }
+                });
+
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const result = `✅ Avatar encontrado!\nTamanho: ${blob.size} bytes\nTipo: ${blob.type}`;
+                    showResult('avatarResult', result, 'success');
+                    showAvatarPreview(blob);
+                } else if (response.status === 404) {
+                    showResult('avatarResult', '⚠️ Avatar não encontrado (instância pode não ter foto de perfil)', 'warning');
+                } else {
+                    const error = await response.text();
+                    showResult('avatarResult', `❌ Erro ${response.status}: ${error}`, 'error');
+                }
+            } catch (error) {
+                showResult('avatarResult', `❌ Erro de conexão: ${error.message}`, 'error');
+            }
+        }
+
+        // Teste 4: Contatos
+        async function testContacts() {
+            const baseUrl = getBaseUrl();
+            const jwtToken = getJwtToken();
+            const instanceToken = getInstanceToken();
+            
+            if (!jwtToken || !instanceToken) {
+                showResult('contactsResult', '❌ JWT Token e Instance Token são obrigatórios', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${baseUrl}/api/v1/user/contacts`, {
+                    headers: {
+                        'Authorization': `Bearer ${jwtToken}`,
+                        'token': instanceToken
+                    }
+                });
+
+                const data = await response.json();
+                
+                if (response.ok && data.code === 200) {
+                    const contacts = Object.keys(data.data);
+                    let result = `✅ ${contacts.length} contato(s) encontrado(s):\n\n`;
+                    
+                    contacts.forEach(jid => {
+                        const contact = data.data[jid];
+                        result += `Nome: ${contact.PushName || 'Sem nome'}\n`;
+                        result += `JID: ${jid}\n`;
+                        result += `Encontrado: ${contact.Found ? 'Sim' : 'Não'}\n`;
+                        result += `---\n`;
+                    });
+                    
+                    showResult('contactsResult', result, contacts.length > 0 ? 'success' : 'warning');
+                } else {
+                    showResult('contactsResult', `❌ Erro: ${data.error || 'Erro desconhecido'}`, 'error');
+                }
+            } catch (error) {
+                showResult('contactsResult', `❌ Erro de conexão: ${error.message}`, 'error');
+            }
+        }
+
+        // Teste 5: Grupos
+        async function testGroups() {
+            const baseUrl = getBaseUrl();
+            const jwtToken = getJwtToken();
+            const instanceToken = getInstanceToken();
+            
+            if (!jwtToken || !instanceToken) {
+                showResult('groupsResult', '❌ JWT Token e Instance Token são obrigatórios', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${baseUrl}/api/v1/group/list`, {
+                    headers: {
+                        'Authorization': `Bearer ${jwtToken}`,
+                        'token': instanceToken
+                    }
+                });
+
+                const data = await response.json();
+                
+                if (response.ok && data.code === 200) {
+                    const groups = data.data.Groups || [];
+                    let result = `✅ ${groups.length} grupo(s) encontrado(s):\n\n`;
+                    
+                    groups.forEach(group => {
+                        result += `Nome: ${group.Name}\n`;
+                        result += `JID: ${group.JID}\n`;
+                        result += `Proprietário: ${group.OwnerJID}\n`;
+                        result += `Participantes: ${group.Participants.length}\n`;
+                        result += `---\n`;
+                    });
+                    
+                    showResult('groupsResult', result, groups.length > 0 ? 'success' : 'warning');
+                } else {
+                    showResult('groupsResult', `❌ Erro: ${data.error || 'Erro desconhecido'}`, 'error');
+                }
+            } catch (error) {
+                showResult('groupsResult', `❌ Erro de conexão: ${error.message}`, 'error');
+            }
+        }
+
+        // Executar todos os testes
+        async function runAllTests() {
+            const resultDiv = document.getElementById('fullTestResult');
+            resultDiv.textContent = '🚀 Executando todos os testes...\n\n';
+            resultDiv.className = 'result';
+            resultDiv.style.display = 'block';
+
+            let allResults = '';
+
+            try {
+                // Teste 1: Instâncias
+                allResults += '1️⃣ Testando listagem de instâncias...\n';
+                await testListInstances();
+                allResults += '✅ Concluído\n\n';
+
+                // Teste 2: Status
+                allResults += '2️⃣ Testando status da instância...\n';
+                await testInstanceStatus();
+                allResults += '✅ Concluído\n\n';
+
+                // Teste 3: Avatar
+                allResults += '3️⃣ Testando busca de avatar...\n';
+                await testAvatar();
+                allResults += '✅ Concluído\n\n';
+
+                // Teste 4: Contatos
+                allResults += '4️⃣ Testando lista de contatos...\n';
+                await testContacts();
+                allResults += '✅ Concluído\n\n';
+
+                // Teste 5: Grupos
+                allResults += '5️⃣ Testando lista de grupos...\n';
+                await testGroups();
+                allResults += '✅ Concluído\n\n';
+
+                allResults += '🎉 Todos os testes foram executados!';
+                showResult('fullTestResult', allResults, 'success');
+
+            } catch (error) {
+                allResults += `❌ Erro durante os testes: ${error.message}`;
+                showResult('fullTestResult', allResults, 'error');
+            }
+        }
+
+        // Auto-preenchimento do JWT Token
+        window.onload = function() {
+            // Tentar obter o token do localStorage se estiver na mesma origem
+            if (window.location.hostname === 'localhost' && window.location.port === '3000') {
+                const jwtInput = document.getElementById('jwtToken');
+                jwtInput.placeholder = 'Abra o console e execute: localStorage.getItem("authToken")';
+            }
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WuzAPI - API REST para WhatsApp</title>
+    <link rel="icon" href="/images/favicon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/github-markdown-css/github-css.css">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <img src="/images/favicon.png" alt="WuzAPI Logo">
+                <h1>WuzAPI</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="/api">API Reference</a></li>
+                    <li><a href="/login">Login</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="markdown-body">
+            <h1>WuzAPI</h1>
+            <p><img src="/images/favicon.png" alt="WuzAPI Logo" style="max-width: 30px; vertical-align: middle;"> WuzAPI é uma implementação da biblioteca <a href="https://github.com/tulir/whatsmeow">@tulir/whatsmeow</a> como um serviço RESTful API com suporte a múltiplos dispositivos e sessões concorrentes.</p>
+            
+            <p>O Whatsmeow não usa Puppeteer em Chrome headless, nem um emulador Android. Ele se comunica diretamente com os servidores websocket do WhatsApp, sendo assim bastante rápido e usando muito menos memória e CPU que essas soluções. A desvantagem é que uma mudança no protocolo do WhatsApp pode quebrar as conexões e exigir uma atualização da biblioteca.</p>
+
+            <h2 id="user-content-ezf3weaa2uhg9u52fwkic-warning">⚠️ Aviso</h2>
+            <p><strong>Usar este software violando os Termos de Serviço do WhatsApp pode resultar no banimento do seu número</strong>: Tenha muito cuidado, não use para enviar SPAM ou qualquer coisa do tipo. Use por sua conta e risco. Se você precisa desenvolver algo com interesse comercial, você deve entrar em contato com um provedor global de soluções WhatsApp e se inscrever no serviço WhatsApp Business API.</p>
+
+            <h2>Endpoints Disponíveis</h2>
+            <ul>
+                <li>Sessão: conectar, desconectar e fazer logout do WhatsApp. Recuperar status de conexão. Recuperar código QR para escanear.</li>
+                <li>Mensagens: enviar texto, imagem, áudio, documento, template, vídeo, adesivo, localização e mensagens de contato.</li>
+                <li>Usuários: verificar se os telefones têm WhatsApp, obter informações do usuário, obter avatar do usuário, recuperar lista completa de contatos.</li>
+                <li>Chat: definir presença (digitando/pausado, gravando mídia), marcar mensagens como lidas, baixar imagens das mensagens.</li>
+                <li>Grupos: listar inscritos, obter informações, obter links de convite, alterar foto e nome.</li>
+                <li>Webhooks: definir e obter webhook que será chamado sempre que um evento/mensagem for recebido.</li>
+            </ul>
+
+            <h2>Pré-requisitos</h2>
+            <p>Pacotes:</p>
+            <ul>
+                <li>Go (Linguagem de Programação Go)</li>
+            </ul>
+            <p>Opcional:</p>
+            <ul>
+                <li>Docker (Containerização)</li>
+            </ul>
+
+            <h2>Compilando</h2>
+            <pre><code>go build .</code></pre>
+
+            <h2>Executando</h2>
+            <p>Por padrão, iniciará um serviço REST na porta 8080. Estes são os parâmetros que você pode usar para alterar o comportamento:</p>
+            <ul>
+                <li>-address: define o endereço IP para vincular o servidor (padrão 0.0.0.0)</li>
+                <li>-port: define o número da porta (padrão 8080)</li>
+                <li>-logtype: formato para logs, console (padrão) ou json</li>
+                <li>-wadebug: ativar debug do whatsmeow, níveis INFO ou DEBUG são suportados</li>
+                <li>-sslcertificate: Arquivo de Certificado SSL</li>
+                <li>-sslprivatekey: Arquivo de Chave Privada SSL</li>
+            </ul>
+            <p>Exemplo:</p>
+            <pre><code>./wuzapi -logtype json</code></pre>
+
+            <h2>Uso</h2>
+            <p>Para abrir sessões, primeiro você precisa criar um usuário e definir um token de autenticação para ele. Você pode fazer isso atualizando o banco de dados Postgres <em>users.db</em>:</p>
+            <pre><code>psql -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME" -c "INSERT INTO users (name, token) VALUES ('John','1234ABCD');"</code></pre>
+
+            <p>Depois de criar alguns usuários, você pode falar com a API passando o cabeçalho <strong>Token</strong> como um meio simples de autenticação. Você pode ter vários usuários (números diferentes) no mesmo servidor.</p>
+
+            <p>O daemon também serve alguns arquivos web estáticos, úteis para desenvolvimento/teste que você pode carregar com seu navegador:</p>
+            <ul>
+                <li>Uma referência de API swagger em <a href="/api">/api</a></li>
+                <li>Uma página web de exemplo para conectar e escanear códigos QR em <a href="/login">/login</a> (onde você precisará passar ?token=1234ABCD)</li>
+            </ul>
+
+            <h2>Referência da API</h2>
+            <p>As chamadas de API devem ser feitas com o tipo de conteúdo json, e os parâmetros enviados no corpo da requisição, sempre passando o cabeçalho Token para autenticar a requisição.</p>
+            <p>Verifique a <a href="/api">Referência da API Swagger</a></p>
+
+            <h2>Licença</h2>
+            <p>Copyright © 2022 Nicolás Gudiño</p>
+            <p><a href="https://choosealicense.com/licenses/mit/">MIT</a></p>
+
+            <h2>Atribuição do Ícone</h2>
+            <p><a href="https://www.flaticon.com/free-icons/communication">Ícones de comunicação criados por Vectors Market - Flaticon</a></p>
+
+            <h2>Legal</h2>
+            <p>Este código não é de forma alguma afiliado, autorizado, mantido, patrocinado ou endossado pelo WhatsApp ou qualquer de suas afiliadas ou subsidiárias. Este é um software independente e não oficial. Use por sua conta e risco.</p>
+
+            <h2>Aviso de Criptografia</h2>
+            <p>Esta distribuição inclui software criptográfico. O país em que você atualmente reside pode ter restrições sobre a importação, posse, uso e/ou reexportação para outro país, de software de criptografia. ANTES de usar qualquer software de criptografia, por favor verifique as leis, regulamentos e políticas do seu país relativas à importação, posse ou uso, e reexportação de software de criptografia, para ver se isso é permitido. Veja <a href="http://www.wassenaar.org/">http://www.wassenaar.org/</a> para mais informações.</p>
+        </div>
+    </main>
+</body>
+</html>

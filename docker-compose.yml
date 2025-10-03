@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  # Backend API (Node.js)
+  backend:
+    build: ./backend
+    ports:
+      - "3001:3001"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./backend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - PORT=3001
+    networks:
+      - whatsapp-network
+    restart: unless-stopped
+
+  # Frontend React
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - REACT_APP_API_URL=http://localhost:3001/api
+    networks:
+      - whatsapp-network
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  # WuzAPI Server (Go)
+  wuzapi-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - WUZAPI_ADMIN_TOKEN=H4Zbhw72PBKdTIgS
+      - DB_USER=wuzapi
+      - DB_PASSWORD=wuzapi
+      - DB_NAME=wuzapi
+      - DB_HOST=db
+      - DB_PORT=5432
+      - TZ=America/Sao_Paulo
+    volumes:
+      - ./dbdata:/app/dbdata
+      - ./files:/app/files
+    depends_on:
+      - db
+    networks:
+      - whatsapp-network
+
+  # PostgreSQL Database
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: wuzapi
+      POSTGRES_PASSWORD: wuzapi
+      POSTGRES_DB: wuzapi
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - whatsapp-network
+
+networks:
+  whatsapp-network:
+    driver: bridge
+
+volumes:
+  db_data:
